@@ -3,230 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Video Downloader</title>
-    <!-- Gradio Client SDK -->
+    <title>Ytdown Pro - Status Check</title>
     <script type="module">
-        import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client@0.1.4/dist/index.min.js";
+        // Latest Gradio Client use kar rahe hain
+        import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
 
         async function startDownload() {
-            const url = document.getElementById('urlInput').value;
-            const btn = document.getElementById('btnText');
-            const loader = document.getElementById('loader');
+            const urlInput = document.getElementById('urlInput');
+            const statusMsg = document.getElementById('statusMsg');
             const resultCard = document.getElementById('resultCard');
             const dlLink = document.getElementById('dlLink');
-            const statusMsg = document.getElementById('statusMsg');
+            const btnText = document.getElementById('btnText');
+            const loader = document.getElementById('loader');
 
-            if (!url) {
-                alert("Please paste a link first!");
+            if (!urlInput.value.trim()) {
+                alert("Please paste a YouTube/Insta link first!");
                 return;
             }
 
-            // UI Updates
+            // UI Reset
+            statusMsg.innerText = "⏳ Connecting to Hugging Face...";
+            statusMsg.style.color = "#cbd5e1";
             loader.style.display = "inline-block";
-            btn.style.display = "none";
+            btnText.style.display = "none";
             resultCard.style.display = "none";
-            statusMsg.innerText = "Processing your request...";
 
             try {
-                // Connecting to your specific Space
+                // 1. Connection Test
+                console.log("Connecting to somiawann/ytdown...");
                 const app = await Client.connect("somiawann/ytdown");
-                const result = await app.predict("/fetch", [url]);
+                
+                statusMsg.innerText = "🚀 Connection Successful! Fetching link...";
+                
+                // 2. Predict Call (Check if endpoint is /fetch or /predict)
+                // Note: Agar aapne api_name="fetch" rakha hai toh "/fetch" use karein
+                const result = await app.predict("/fetch", [urlInput.value]);
 
-                if (result.data[0]) {
+                if (result.data && result.data[0]) {
                     dlLink.href = result.data[0];
                     resultCard.style.display = "block";
-                    statusMsg.innerText = "✅ Video Ready for Download!";
+                    statusMsg.innerText = "✅ Video Ready!";
+                    statusMsg.style.color = "#10b981";
                 } else {
-                    statusMsg.innerText = "❌ Link not found. Try another video.";
+                    throw new Error("API returned empty data. Check your app.py logic.");
                 }
+
             } catch (err) {
-                statusMsg.innerText = "❌ Error: Make sure your Space is 'Running'.";
-                console.error(err);
+                console.error("DETAILED ERROR:", err);
+                statusMsg.innerText = "❌ ERROR: " + err.message;
+                statusMsg.style.color = "#ef4444";
+                
+                // Alert for mobile debugging
+                alert("Action Failed! Error: " + err.message + "\n\nTip: Make sure your Space somiawann/ytdown is 'Running' and Public.");
             } finally {
                 loader.style.display = "none";
-                btn.style.display = "inline-block";
+                btnText.style.display = "inline-block";
             }
         }
         window.startDownload = startDownload;
     </script>
-
     <style>
-        :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text: #f8fafc;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            background-image: radial-gradient(circle at top right, #1e1b4b, var(--bg));
-            color: var(--text);
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .app-container {
-            width: 100%;
-            max-width: 450px;
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            background: linear-gradient(to right, #818cf8, #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        p.subtitle {
-            color: #94a3b8;
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
-
-        .input-group {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        input {
-            width: 100%;
-            padding: 16px;
-            border-radius: 12px;
-            border: 2px solid #334155;
-            background: #0f172a;
-            color: white;
-            font-size: 16px;
-            box-sizing: border-box;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
-        }
-
-        .btn-download {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--primary), #a855f7);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-download:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);
-        }
-
-        #statusMsg {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #cbd5e1;
-        }
-
-        .result-card {
-            margin-top: 25px;
-            padding: 20px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px dashed #10b981;
-            border-radius: 16px;
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .dl-confirm-btn {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 12px 24px;
-            background: #10b981;
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-
-        .dl-confirm-btn:hover {
-            background: #059669;
-        }
-
-        /* Loader Animation */
-        .loader {
-            width: 20px;
-            height: 20px;
-            border: 3px solid #fff;
-            border-bottom-color: transparent;
-            border-radius: 50%;
-            display: none;
-            animation: rotation 1s linear infinite;
-        }
-
-        @keyframes rotation {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        footer {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #64748b;
-        }
+        /* CSS Same as before, keeping it clean */
+        :root { --primary: #6366f1; --bg: #0f172a; --card-bg: #1e293b; --text: #f8fafc; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .app-container { width: 100%; max-width: 400px; background: var(--card-bg); padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); text-align: center; }
+        input { width: 100%; padding: 14px; border-radius: 10px; border: 2px solid #334155; background: #0f172a; color: white; margin-bottom: 20px; box-sizing: border-box; }
+        .btn-download { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .loader { width: 18px; height: 18px; border: 2px solid #fff; border-bottom-color: transparent; border-radius: 50%; display: none; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .result-card { margin-top: 20px; padding: 15px; background: rgba(16,185,129,0.1); border-radius: 12px; display: none; }
+        .dl-confirm-btn { display: inline-block; margin-top: 10px; padding: 10px 20px; background: #10b981; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; }
     </style>
 </head>
 <body>
-
-<div class="app-container">
-    <h1>Ytdown Pro</h1>
-    <p class="subtitle">Download videos from YouTube, Instagram, TikTok and more in high quality.</p>
-    
-    <div class="input-group">
-        <input type="text" id="urlInput" placeholder="Paste your link here...">
+    <div class="app-container">
+        <h1>Ytdown Pro</h1>
+        <input type="text" id="urlInput" placeholder="Paste link here...">
+        <button class="btn-download" onclick="startDownload()">
+            <span id="btnText">Get Video</span>
+            <div id="loader" class="loader"></div>
+        </button>
+        <div id="statusMsg">Ready...</div>
+        <div id="resultCard" class="result-card">
+            <a id="dlLink" href="#" target="_blank" class="dl-confirm-btn">📥 DOWNLOAD NOW</a>
+        </div>
     </div>
-    
-    <button class="btn-download" onclick="startDownload()">
-        <span id="btnText">Get Download Link</span>
-        <div id="loader" class="loader"></div>
-    </button>
-    
-    <div id="statusMsg">Ready to fetch...</div>
-
-    <div id="resultCard" class="result-card">
-        <p style="margin: 0; font-weight: bold; color: #10b981;">✨ Success!</p>
-        <a id="dlLink" href="#" target="_blank" class="dl-confirm-btn">📥 Download Video Now</a>
-    </div>
-
-    <footer>
-        Powered by Cobalt & Hugging Face Bridge
-    </footer>
-</div>
-
 </body>
 </html>
