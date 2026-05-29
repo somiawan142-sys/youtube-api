@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Video Downloader</title>
+    <style>
+        :root { --primary: #5d3fd3; --bg: #0f172a; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .container { background: #1e293b; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 100%; max-width: 450px; text-align: center; }
+        h1 { margin-bottom: 1.5rem; font-size: 1.8rem; }
+        input { width: 100%; padding: 12px; border: 2px solid #334155; border-radius: 8px; background: #0f172a; color: white; margin-bottom: 1rem; box-sizing: border-box; font-size: 1rem; }
+        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; transition: 0.3s; }
+        button:hover { background: #4a2eb0; }
+        #result { margin-top: 1.5rem; display: none; }
+        .download-link { display: inline-block; padding: 12px 25px; background: #10b981; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 10px; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display: none; margin: 10px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📹 Universal Downloader</h1>
+    <p>Download from YT, Insta, TikTok & more</p>
+    
+    <input type="text" id="videoUrl" placeholder="Paste link here...">
+    <button id="fetchBtn" onclick="fetchVideo()">Get Video</button>
+    
+    <div id="loader" class="loader"></div>
+    
+    <div id="result">
+        <p id="videoTitle">✅ Video is ready!</p>
+        <a id="downloadBtn" href="#" target="_blank" class="download-link">📥 Download Now</a>
+    </div>
+</div>
+
+<script>
+    async function fetchVideo() {
+        const url = document.getElementById('videoUrl').value;
+        const resultDiv = document.getElementById('result');
+        const loader = document.getElementById('loader');
+        const fetchBtn = document.getElementById('fetchBtn');
+
+        if (!url) { alert("Please paste a link!"); return; }
+
+        loader.style.display = "block";
+        resultDiv.style.display = "none";
+        fetchBtn.disabled = true;
+
+        // Cobalt ke different servers (Instances)
+        const instances = [
+            "https://api.cobalt.tools/api/json",
+            "https://cobalt.api.unrestrained.ly/api/json",
+            "https://api.v0.unrestrained.ly/api/json"
+        ];
+
+        let success = false;
+
+        for (let apiUrl of instances) {
+            try {
+                console.log("Trying API: " + apiUrl);
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ url: url, videoQuality: "720" })
+                });
+
+                const data = await response.json();
+                if (data.url) {
+                    document.getElementById('downloadBtn').href = data.url;
+                    resultDiv.style.display = "block";
+                    success = true;
+                    break; // Agar link mil gaya toh loop band
+                }
+            } catch (err) {
+                console.log("This instance failed, trying next...");
+            }
+        }
+
+        if (!success) {
+            alert("⚠️ API Error: Possible reasons:\n1. Mobile previewer blocks API.\n2. Please host on GitHub or use Localhost server.");
+        }
+
+        loader.style.display = "none";
+        fetchBtn.disabled = false;
+    }
+</script>
+</body>
+  </html>
