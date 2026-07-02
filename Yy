@@ -1,0 +1,11 @@
+vless://a5c05c1e-aa68-443f-8598-09800244bd4b@192.71.82.2:443?allowInsecure=0&fp=firefox&security=tls&alpn=h3&insecure=0&path=%2FLiL%3Fed%3D2560&sni=kingcloud.biack.ir&encryption=none&type=ws#Telegram%20%7C%20Zero_tunnel
+
+vless://3aff2f4c-cbe7-b6f1-d1b2-86ad0a8d78c2@ansooyefilter-channel.up.railway.app:443?allowInsecure=0&fp=chrome&security=tls&insecure=0&alpn=http%2F1.1&path=%2Fws%2F3aff2f4c-cbe7-b6f1-d1b2-86ad0a8d78c2&sni=ansooyefilter-channel.up.railway.app&encryption=none&type=ws&host=ansooyefilter-channel.up.railway.app#Telegram%20%7C%20Zero_tunnel
+
+vless://3b715892-8610-4fdc-9086-647b36af5443@html.iranpood.com:2086?type=xhttp&security=none&host=h.cafearen.ir&path=%2F%3Fed%3D2082&mode=auto&encryption=none#Telegram%20%7C%20Zero_tunnel
+
+vless://99295e0f-b775-4021-8c22-93779f3db91b@canada.vpnserverhub.com:443?encryption=none&serviceName=StreamData&type=grpc&mode=gun&security=reality&fp=chrome&sni=mirror.csclub.uwaterloo.ca&pbk=HlbBuhYzXDZhWlZHlsfqFNNhCYGxTs2WvNFdkjxN1Dg#Telegram%20%7C%20Zero_tunnel
+
+vless://63ff4bfa-0f1d-48e4-8314-e882b14e602c@spain.unixzone.us:36326?encryption=none&security=none&type=ws&path=%2Fjdiedjiedjijd#Telegram%20%7C%20Zero_tunnel
+
+vless://3b715892-8610-4fdc-9086-647b36af5443@cd3.postshup.ir:2086?mode=auto&encryption=none&path=%2F%3Fed%3D8192&type=xhttp&security=none&host=B.cafearen.ir#Telegram%20%7C%20Zero_tunnel
